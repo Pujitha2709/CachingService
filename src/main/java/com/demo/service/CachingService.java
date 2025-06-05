@@ -57,36 +57,6 @@ public class CachingService {
             logger.error("Failed to add entity with ID: {}", cacheEntity != null ? cacheEntity.getId() : "null", e);
         }
     }
-     /**
-     * Retrieves a CacheEntity from the cache.
-     * If the entity is not found in the cache, it attempts to retrieve it from the database.
-     * If the entity is evicted from the cache, it will not be reloaded into the cache.
-     *
-     * @param cacheEntity the CacheEntity to retrieve
-     * @return the retrieved CacheEntity, or null if not found
-     */
-    public CacheEntity get(CacheEntity cacheEntity) {
-        try {
-            if (cacheEntity == null || cacheEntity.getId() == null) {
-                logger.warn("Attempted to get a null entity or entity with null ID.");
-                return null;
-            }
-            // Check cache first
-            CacheEntity result = cache.get(cacheEntity.getId());
-            if (result == null) {
-                // Do not reload evicted entities into the cache
-                logger.info("Entity with ID: {} not found in cache.", cacheEntity.getId());
-                result = database.get(cacheEntity.getId()); // Retrieve directly from the database
-                if (result != null) {
-                    logger.info("Entity with ID: {} found in database but not reloaded into cache.", cacheEntity.getId());
-                }
-            }
-            return result;
-        } catch (Exception e) {
-            logger.error("Failed to retrieve entity with ID: {}", cacheEntity != null ? cacheEntity.getId() : "null", e);
-            return null;
-        }
-    }
 
     /**
      * Retrieves a CacheEntity from the cache or database based on the loadFromDB flag.

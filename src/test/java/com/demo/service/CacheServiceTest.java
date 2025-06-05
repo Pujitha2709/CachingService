@@ -26,7 +26,7 @@ public class CacheServiceTest {
         cache.add(e);
 
 
-        assertEquals("Alpha", cache.get(e).getData());
+        assertEquals("Alpha", cache.get(e,true).getData());
 
         assertEquals(1, cache.dbSize());
     }
@@ -41,7 +41,7 @@ public class CacheServiceTest {
         cache.add(new CacheEntity("1", "NewValue"));
 
         // The latest value should overwrite the old one
-        assertEquals("NewValue", cache.get(new CacheEntity("1", "")).getData());
+        assertEquals("NewValue", cache.get(new CacheEntity("1", ""),true).getData());
     }
 
     /**
@@ -55,7 +55,7 @@ public class CacheServiceTest {
         cache.add(new CacheEntity("3", "C"));  // "1" should be evicted from cache
 
         assertNull(cache.get(new CacheEntity("1", ""),false));
-        assertEquals("A", cache.get(new CacheEntity("1", "")).getData()); // Load from DB
+        assertEquals("A", cache.get(new CacheEntity("1", ""),true).getData()); // Load from DB
     }
     /**
      * Tests the retrieval of an entity from the cache.
@@ -67,7 +67,7 @@ public class CacheServiceTest {
         cache.add(e);
         cache.remove(e);
 
-        assertNull("Entity should be removed from both cache and DB", cache.get(e));
+        assertNull("Entity should be removed from both cache and DB", cache.get(e,true));
     }
 
     /**
@@ -79,7 +79,7 @@ public class CacheServiceTest {
         cache.add(new CacheEntity("1", "Z"));
         cache.clear();
 
-        assertEquals("Z", cache.get(new CacheEntity("1", "")).getData()); // Should load from DB
+        assertEquals("Z", cache.get(new CacheEntity("1", ""),true).getData()); // Should load from DB
     }
 
     /**
@@ -92,7 +92,7 @@ public class CacheServiceTest {
         cache.add(new CacheEntity("2", "Y"));
         cache.removeAll();
 
-        assertNull(cache.get(new CacheEntity("1", "")));
+        assertNull(cache.get(new CacheEntity("1", ""),true));
         assertEquals(0, cache.cacheSize());
         assertEquals(0, cache.dbSize());
     }
@@ -136,7 +136,7 @@ public class CacheServiceTest {
         cache.add(e);
 
         // Assert that the data is correctly stored and no duplicates exist in the DB
-        assertEquals("Data", cache.get(new CacheEntity("1", "")).getData());
+        assertEquals("Data", cache.get(new CacheEntity("1", ""),true).getData());
         assertEquals("DB size should remain 1 after duplicate adds", 1, cache.dbSize());
     }
 
@@ -147,7 +147,7 @@ public class CacheServiceTest {
     @Test
     public void testGetNonExistentKey() {
         // Assert that a non-existent key returns null
-        assertNull("Non-existent key should return null", cache.get(new CacheEntity("999", "")));
+        assertNull("Non-existent key should return null", cache.get(new CacheEntity("999", ""),true));
     }
 
     /**
@@ -183,7 +183,7 @@ public class CacheServiceTest {
     @Test
     public void testGetNullEntity() {
         // Assert that getting a null entity returns null
-        assertNull("Getting a null entity should return null", cache.get(null));
+        assertNull("Getting a null entity should return null", cache.get(null,true));
     }
 
     /**
@@ -210,6 +210,6 @@ public class CacheServiceTest {
 
         assertEquals("Cache size should be 1 after adding entity with null data", 1, cache.cacheSize());
         assertEquals("DB size should be 1 after adding entity with null data", 1, cache.dbSize());
-        assertNull("Data for the entity should be null", cache.get(new CacheEntity("1", "")).getData());
+        assertNull("Data for the entity should be null", cache.get(new CacheEntity("1", ""),true).getData());
     }
 }
