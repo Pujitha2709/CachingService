@@ -9,14 +9,18 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
+/**
+ * CachingService provides a thread-safe caching mechanism with LRU eviction policy.
+ * It uses a write-through cache strategy, ensuring that all writes are immediately persisted to the database.
+ * The cache is implemented using a synchronized LinkedHashMap to maintain order and thread safety.
+ */
 public class CachingService {
     private static final Logger logger = LoggerFactory.getLogger(CachingService.class);
 
     private final Map<String, CacheEntity> cache; // Thread-safe map
     private final MockDatabaseDao database;
 
-
+    // Constructor initializes the cache with a specified maximum size
     public CachingService(int maxSize) {
         this.database = new MockDatabaseDao();
 
@@ -33,7 +37,13 @@ public class CachingService {
         });
     }
 
-
+    /**
+     * Adds a CacheEntity to the cache and database.
+     * If the entity is null or has a null ID, it logs a warning and does not add it.
+     * The cache uses a write-through strategy, meaning it writes to the database immediately.
+     *
+     * @param cacheEntity the CacheEntity to add
+     */
     public void add(CacheEntity cacheEntity) {
         try {
             if (cacheEntity == null || cacheEntity.getId() == null) {
@@ -47,7 +57,14 @@ public class CachingService {
             logger.error("Failed to add entity with ID: {}", cacheEntity != null ? cacheEntity.getId() : "null", e);
         }
     }
-
+     /**
+     * Retrieves a CacheEntity from the cache.
+     * If the entity is not found in the cache, it attempts to retrieve it from the database.
+     * If the entity is evicted from the cache, it will not be reloaded into the cache.
+     *
+     * @param cacheEntity the CacheEntity to retrieve
+     * @return the retrieved CacheEntity, or null if not found
+     */
     public CacheEntity get(CacheEntity cacheEntity) {
         try {
             if (cacheEntity == null || cacheEntity.getId() == null) {
@@ -71,7 +88,15 @@ public class CachingService {
         }
     }
 
-
+    /**
+     * Retrieves a CacheEntity from the cache or database based on the loadFromDB flag.
+     * If the entity is not found in the cache and loadFromDB is true, it retrieves it from the database.
+     * If the entity is evicted from the cache, it will be reloaded into the cache if found in the database.
+     *
+     * @param cacheEntity the CacheEntity to retrieve
+     * @param loadFromDB  whether to load from the database if not found in cache
+     * @return the retrieved CacheEntity, or null if not found
+     */
     public CacheEntity get(CacheEntity cacheEntity, boolean loadFromDB) {
         try {
             if (cacheEntity == null || cacheEntity.getId() == null) {
@@ -93,7 +118,12 @@ public class CachingService {
         }
     }
 
-
+    /**
+     * Removes a CacheEntity from both the cache and the database.
+     * If the entity is null or has a null ID, it logs a warning and does not attempt to remove it.
+     *
+     * @param cacheEntity the CacheEntity to remove
+     */
     public void remove(CacheEntity cacheEntity) {
         try {
             if (cacheEntity == null || cacheEntity.getId() == null) {
@@ -108,7 +138,10 @@ public class CachingService {
         }
     }
 
-
+    /**
+     * Removes all CacheEntity objects from both the cache and the database.
+     * This method clears the cache and removes all entries from the database.
+     */
     public void removeAll() {
         try {
             cache.clear();
@@ -119,7 +152,10 @@ public class CachingService {
         }
     }
 
-
+    /**
+     * Clears all entries from the cache.
+     * This method does not affect the database; it only clears the in-memory cache.
+     */
     public void clear() {
         try {
             cache.clear();
@@ -129,12 +165,22 @@ public class CachingService {
         }
     }
 
-
+    /**
+     * Returns the current size of the cache.
+     * This method provides the number of entries currently stored in the cache.
+     *
+     * @return the size of the cache
+     */
     public int cacheSize() {
         return cache.size();
     }
 
-
+    /**
+     * Returns the current size of the database.
+     * This method provides the number of entries currently stored in the database.
+     *
+     * @return the size of the database
+     */
     public int dbSize() {
         return database.size();
     }

@@ -2,7 +2,10 @@ package com.demo;
 import com.demo.model.CacheEntity;
 import com.demo.service.CachingService;
 
-
+/**
+ * Main class to demonstrate the caching service functionality.
+ * It initializes a cache, adds entities, and retrieves them.
+ */
 public class CachePoc {
     public static void main(String[] args) {
 
