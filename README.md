@@ -33,9 +33,8 @@ Base URL: http://localhost:8080/cache
 
 | Method | Endpoint                | Description                | Body Example                |
 |--------|-------------------------|----------------------------|-----------------------------|
-| POST   | /cache                | Add entity to cache        | { "id": "1", "data": "A" }|
-| GET    | /cache/{id}           | Get entity by id           |                             |
-| GET    | /cache/{id}?loadFromDB=true | Get entity from DB if not in cache |         |
+| POST   | /cache                | Add entity to cache        | { "id": "1", "data": "A" }|                            |
+| GET    | /cache/{id}?loadFromDB=true | Get entity from DB if not in cache |         
 | DELETE | /cache/{id}           | Remove entity by id        |                             |
 | DELETE | /cache/all            | Remove all entities        |                             |
 | GET    | /cache/cacheSize      | Get cache size             |                             |
